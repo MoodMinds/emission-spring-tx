@@ -10,6 +10,9 @@ If annotated with `@Transactional`, the traverse methods of an `Emittable` or `T
 additional pre- and post-transaction demarcating executions. The traversal's possibly negative completion, indicated by a `boolean`
 result, as well as thrown exceptions, serves as a signal to consider a transaction rollback.
 
+Notably, to maintain the `Thread`-binding characteristic of Spring's transactions, the traversal is always executed sequentially
+in the calling `Thread`, even when invoked with the `parallel` method.
+
 ## Usage
 
 Include the provided `TraverseSupportTransactionAdvisory` in your Spring config and be able to use `Emittable` and `Traversable`
