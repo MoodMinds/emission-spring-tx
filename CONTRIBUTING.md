@@ -1,6 +1,6 @@
 # Contribution Guidelines
 
-Thank you for your interest in contributing to Emission Spring Transactions!
+Thank you for your interest in contributing to **Emission Spring Transactions**!
 
 **Project Status: Experimental and Under Development**
 
