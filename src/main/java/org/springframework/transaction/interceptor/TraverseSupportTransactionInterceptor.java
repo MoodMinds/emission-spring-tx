@@ -12,6 +12,7 @@ import org.springframework.transaction.TransactionManager;
 import org.moodminds.traverse.TraverseSupport;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.Optional.ofNullable;
 import static org.moodminds.emission.Emittable.emittable;
@@ -105,6 +106,8 @@ public class TraverseSupportTransactionInterceptor extends TransactionIntercepto
         final PlatformTransactionManager transactionManager;
         final TransactionAttribute transactionAttribute;
 
+        final AtomicBoolean informSequential = new AtomicBoolean(true);
+
         /**
          * Construct the interceptor object with the specified dependencies.
          *
@@ -129,9 +132,7 @@ public class TraverseSupportTransactionInterceptor extends TransactionIntercepto
             TransactionInfo transactionInfo = createTransactionIfNecessary(transactionManager, transactionAttribute,
                     methodIdentification(this.method, target, transactionAttribute));
 
-            if (logger.isInfoEnabled() && !method.isSequence())
-                logger.info("Enforcing sequential traversal for the current thread within a transaction context ["
-                        + transactionInfo.getJoinpointIdentification() + "(" + traversable.getClass() + ")" + "].");
+            informSequential(method, transactionInfo);
 
             boolean complete;
 
@@ -149,6 +150,13 @@ public class TraverseSupportTransactionInterceptor extends TransactionIntercepto
                 commitTransactionAfterCompletion(transactionInfo);
 
             return complete;
+        }
+
+        private void informSequential(TraverseMethod method, TransactionInfo transactionInfo) {
+            if (logger.isInfoEnabled() && !method.isSequence() && informSequential.compareAndSet(true, false))
+                logger.info("\n!!! Important !!!\n"
+                        + "Enforcing sequential traversal for the current thread within a transaction context ["
+                        + transactionInfo.getJoinpointIdentification() + "(" + traversable.getClass() + ")" + "].");
         }
     }
 }
