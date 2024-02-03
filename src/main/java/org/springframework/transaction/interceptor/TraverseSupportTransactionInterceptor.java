@@ -83,7 +83,7 @@ public class TraverseSupportTransactionInterceptor extends TransactionIntercepto
     private void rollbackTransactionAfterFulfillment(TransactionInfo transactionInfo) {
         if (transactionInfo.getTransactionStatus() != null) {
             if (logger.isTraceEnabled())
-                logger.trace("Rolling back transaction for [" + transactionInfo.getJoinpointIdentification() + "] after fulfillment of the traverse demand.");
+                logger.trace("Rolling back the transaction [" + transactionInfo.getJoinpointIdentification() + "] as the traversal demand was fulfilled before the completion.");
             transactionInfo.getTransactionManager().rollback(transactionInfo.getTransactionStatus());
         }
     }
