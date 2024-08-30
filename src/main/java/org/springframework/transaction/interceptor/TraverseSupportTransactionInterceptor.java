@@ -106,7 +106,7 @@ public class TraverseSupportTransactionInterceptor extends TransactionIntercepto
         final PlatformTransactionManager transactionManager;
         final TransactionAttribute transactionAttribute;
 
-        final AtomicBoolean informedSequential = new AtomicBoolean(false);
+        final AtomicBoolean informSequential = new AtomicBoolean(true);
 
         /**
          * Construct the interceptor object with the specified dependencies.
@@ -153,7 +153,7 @@ public class TraverseSupportTransactionInterceptor extends TransactionIntercepto
         }
 
         private void informSequential(TraverseMethod method, TransactionInfo transactionInfo) {
-            if (logger.isInfoEnabled() && !method.isSequence() && informedSequential.compareAndSet(false, true))
+            if (logger.isInfoEnabled() && !method.isSequence() && informSequential.compareAndSet(true, false))
                 logger.info("\n!!! Important !!!\n"
                         + "Enforcing sequential traversal for the current thread within a transaction context ["
                         + transactionInfo.getJoinpointIdentification() + "(" + traversable.getClass() + ")" + "].");
